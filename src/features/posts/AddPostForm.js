@@ -1,15 +1,28 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { nanoid } from '@reduxjs/toolkit'
-
-const onTitleChanged = e => setTitle(e.target.value)
-const onContentChanged = e => setContent(e.target.value)
-
+import { postAdded} from './postsSlice'
 
 
 const AddPostForm = () => {
-  
+    const dispatch = useDispatch();
 
+  
+    const [title, setTitle] = useState('')
+    const [content, setContent] = useState('')     
+    
+    const onTitleChanged = e => setTitle(e.target.value)
+    const onContentChanged = e => setContent(e.target.value)
+
+    const onSavePostClicked = () => {
+        if (title && content) {
+            dispatch(
+                postAdded({title, content, id:nanoid()})
+            )
+            setTitle('')
+            setContent('')
+        }
+    }
 
     return (
         <section>
@@ -21,13 +34,8 @@ const AddPostForm = () => {
                     id="postTitle"
                     name="postTitle"
                     value={title}
-                    onChange={onTitleChanged}
-                />
-                <label htmlFor="postAuthor">Author:</label>
-                <select id="postAuthor" value={userId} onChange={onAuthorChanged}>
-                    <option value=""></option>
-                    {usersOptions}
-                </select>
+                    onChange={onTitleChanged}   
+                />                
                 <label htmlFor="postContent">Content:</label>
                 <textarea
                     id="postContent"
@@ -38,7 +46,6 @@ const AddPostForm = () => {
                 <button
                     type="button"
                     onClick={onSavePostClicked}
-                    disabled={!canSave}
                 >Save Post</button>
             </form>
         </section>
